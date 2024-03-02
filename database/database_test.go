@@ -92,3 +92,28 @@ func TestEditColumnTypeFailedThenDataRollbacks(t *testing.T) {
 		t.Error("failed to rollback")
 	}
 }
+
+func TestEditColumnTypeSuccessThenDataUpdated(t *testing.T) {
+	table := CreateTable()
+	table.AddColumn("name", String)
+	table.AddColumn("age", Int64)
+	table.AddColumn("email", String)
+	name := Item[any]{"John"}
+	age := Item[any]{int64(30)}
+	email := Item[any]{"email@example.com"}
+	row := Row{Values: []*Item[any]{&name, &age, &email}}
+	err := table.AddRow(row)
+	if err != nil {
+		t.Error("failed to add row")
+		t.Error(err)
+		return
+	}
+	err = table.EditColumnType(1, String)
+	if err == nil {
+		t.Error("should be failed. email is not convertible to int64.")
+		return
+	}
+	if table.Rows[1].Values[1].Value == "30" {
+		t.Error("failed to update")
+	}
+}
