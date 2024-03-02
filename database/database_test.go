@@ -117,3 +117,17 @@ func TestEditColumnTypeSuccessThenDataUpdated(t *testing.T) {
 		t.Error("failed to update")
 	}
 }
+
+func TestDropColumn(t *testing.T) {
+	table := CreateTable()
+	table.AddColumn("name", String)
+	table.AddColumn("age", Int64)
+	table.AddColumn("email", String)
+	table.DropColumn(1)
+	if len(table.Columns) != 2 {
+		t.Error("failed to drop column")
+	}
+	if table.Columns[0] != "name" && table.Columns[1] != "email" {
+		t.Error("failed to drop column")
+	}
+}

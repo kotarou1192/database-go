@@ -165,6 +165,16 @@ func generateDefaultItem(columnType ColumnType) (*Item[any], error) {
 	}
 }
 
+// DropColumnはテーブルからカラムを削除する
+func (t *Table) DropColumn(columnIndex int) {
+	tt := t.deepCopy()
+	for _, row := range tt.Rows {
+		row.Values = append(row.Values[:columnIndex], row.Values[columnIndex+1:]...)
+	}
+	tt.Columns = append(tt.Columns[:columnIndex], tt.Columns[columnIndex+1:]...)
+	*t = *tt
+}
+
 // AddRowはテーブルに新しい行を追加する
 func (t *Table) AddRow(row Row) error {
 	for i, item := range row.Values {
